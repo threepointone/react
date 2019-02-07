@@ -687,4 +687,27 @@ describe('ReactTestUtils', () => {
       {withoutStack: true},
     );
   });
+
+  it('should work with async/await', () => {
+    // try to pass this test without changing the code in App
+    function App() {
+      const [toggle, setToggle] = React.useState(0);
+
+      async function doTheThing() {
+        await null; // or a fetch call, or whatever
+        setToggle(1);
+      }
+
+      React.useEffect(() => {
+        doTheThing();
+      }, []);
+      return null;
+    }
+    act(() => {
+      ReactDOM.render(<App />, document.createElement('div'));
+    });
+
+    // ???
+    // act(() => jest.runAllTimers()); <- this doesn't flush the promise task queue
+  });
 });

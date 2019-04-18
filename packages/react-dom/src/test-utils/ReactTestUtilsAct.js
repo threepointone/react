@@ -98,6 +98,7 @@ function act(callback: () => Thenable) {
         //eslint-disable-next-line no-undef
         Promise.resolve()
           .then(() => {})
+          // .then(() => {})
           .then(() => {
             if (called === false) {
               warningWithoutStack(
@@ -154,16 +155,14 @@ function act(callback: () => Thenable) {
       throw err;
     }
 
-    // in the sync case, the returned thenable only warns *if* await-ed
+    // in the sync case, the returned thenable calls an async act(), flushing effects/updates
     return {
-      then(resolve: () => void) {
-        if (__DEV__) {
-          warningWithoutStack(
-            false,
-            'Do not await the result of calling act(...) with sync logic, it is not a Promise.',
-          );
-        }
-        resolve();
+      then(resolve: () => void, reject: (?Error) => void) {
+        console.log('opening')
+        return act(async () => {}).then(() => {
+          console.log('closing')
+          resolve()
+        })
       },
     };
   }

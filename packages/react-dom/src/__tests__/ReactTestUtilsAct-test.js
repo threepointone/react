@@ -260,13 +260,28 @@ describe('ReactTestUtils.act()', () => {
       );
     });
 
-    it('warns if you try to await an .act call', () => {
-      expect(() => act(() => {}).then(() => {})).toWarnDev(
-        [
-          'Do not await the result of calling act(...) with sync logic, it is not a Promise.',
-        ],
-        {withoutStack: true},
-      );
+    fit('flushes effects/updates if you await a synchronous .act call', async () => {
+      // this is just the cascading updates test, but written with a sync callback
+      function App() {
+        let [state, setState] = React.useState(0);
+        async function ticker() {
+          await null;
+          console.log('setting', state + 1)
+          setState(x => x + 1);
+        }
+        React.useEffect(
+          () => {
+            ticker();
+          },
+          [Math.min(state, 4)],
+        );
+        return state;
+      }
+      await act(() => {
+        ReactDOM.render(<App />, container);
+      })
+      expect(container.innerHTML).toBe('5');
+      
     });
   });
   describe('asynchronous tests', () => {

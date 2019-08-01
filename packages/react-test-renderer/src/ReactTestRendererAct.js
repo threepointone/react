@@ -8,6 +8,7 @@
  */
 import type {Thenable} from 'react-reconciler/src/ReactFiberWorkLoop';
 
+import invariant from 'shared/invariant';
 import {
   batchedUpdates,
   flushPassiveEffects,
@@ -71,15 +72,13 @@ function act(callback: () => Thenable) {
     actingUpdatesScopeDepth--;
     IsSomeRendererActing.current = previousIsSomeRendererActing;
     IsThisRendererActing.current = previousIsThisRendererActing;
-    if (__DEV__) {
-      if (actingUpdatesScopeDepth > previousActingUpdatesScopeDepth) {
-        // if it's _less than_ previousActingUpdatesScopeDepth, then we can assume the 'other' one has warned
-        warningWithoutStack(
-          null,
-          'You seem to have overlapping act() calls, this is not supported. ' +
-            'Be sure to await previous act() calls before making a new one. ',
-        );
-      }
+    if (actingUpdatesScopeDepth > previousActingUpdatesScopeDepth) {
+      // if it's _less than_ previousActingUpdatesScopeDepth, then we can assume the 'other' one has warned
+      warningWithoutStack(
+        null,
+        'You seem to have overlapping act() calls, this is not supported. ' +
+          'Be sure to await previous act() calls before making a new one. ',
+      );
     }
   }
 
@@ -100,22 +99,20 @@ function act(callback: () => Thenable) {
     // setup a boolean that gets set to true only
     // once this act() call is await-ed
     let called = false;
-    if (__DEV__) {
-      if (typeof Promise !== 'undefined') {
-        //eslint-disable-next-line no-undef
-        Promise.resolve()
-          .then(() => {})
-          .then(() => {
-            if (called === false) {
-              warningWithoutStack(
-                null,
-                'You called act(async () => ...) without await. ' +
-                  'This could lead to unexpected testing behaviour, interleaving multiple act ' +
-                  'calls and mixing their scopes. You should - await act(async () => ...);',
-              );
-            }
-          });
-      }
+    if (typeof Promise !== 'undefined') {
+      //eslint-disable-next-line no-undef
+      Promise.resolve()
+        .then(() => {})
+        .then(() => {
+          if (called === false) {
+            warningWithoutStack(
+              null,
+              'You called act(async () => ...) without await. ' +
+                'This could lead to unexpected testing behaviour, interleaving multiple act ' +
+                'calls and mixing their scopes. You should - await act(async () => ...);',
+            );
+          }
+        });
     }
 
     // in the async case, the returned thenable runs the callback, flushes
@@ -154,14 +151,12 @@ function act(callback: () => Thenable) {
       },
     };
   } else {
-    if (__DEV__) {
-      warningWithoutStack(
-        result === undefined,
-        'The callback passed to act(...) function ' +
-          'must return undefined, or a Promise. You returned %s',
-        result,
-      );
-    }
+    warningWithoutStack(
+      result === undefined,
+      'The callback passed to act(...) function ' +
+        'must return undefined, or a Promise. You returned %s',
+      result,
+    );
 
     // flush effects until none remain, and cleanup
     try {
@@ -182,16 +177,72 @@ function act(callback: () => Thenable) {
     // in the sync case, the returned thenable only warns *if* await-ed
     return {
       then(resolve: () => void) {
-        if (__DEV__) {
-          warningWithoutStack(
-            false,
-            'Do not await the result of calling act(...) with sync logic, it is not a Promise.',
-          );
-        }
+        warningWithoutStack(
+          false,
+          'Do not await the result of calling act(...) with sync logic, it is not a Promise.',
+        );
         resolve();
       },
     };
   }
 }
 
-export default act;
+function actProd(callback: () => Thenable) {
+  invariant(
+    actingUpdatesScopeDepth === 0,
+    'act() cannot be nested in non-dev modes.',
+  );
+  actingUpdatesScopeDepth++;
+
+  function onDone() {
+    actingUpdatesScopeDepth--;
+  }
+  let result;
+  try {
+    result = batchedUpdates(callback);
+  } catch (error) {
+    // on sync errors, we still want to 'cleanup' and decrement actingUpdatesScopeDepth
+    onDone();
+    throw error;
+  }
+  if (
+    result !== null &&
+    typeof result === 'object' &&
+    typeof result.then === 'function'
+  ) {
+    return {
+      then(resolve: () => void, reject: (?Error) => void) {
+        result.then(
+          () => {
+            // we're about to exit the act() scope,
+            // now's the time to flush tasks/effects
+            flushWorkAndMicroTasks((err: ?Error) => {
+              onDone();
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+          },
+          err => {
+            onDone();
+            reject(err);
+          },
+        );
+      },
+    };
+  } else {
+    try {
+      // we're about to exit the act() scope,
+      // now's the time to flush effects
+      flushWork();
+      onDone();
+    } catch (err) {
+      onDone();
+      throw err;
+    }
+  }
+}
+
+export default (__DEV__ ? act : actProd);

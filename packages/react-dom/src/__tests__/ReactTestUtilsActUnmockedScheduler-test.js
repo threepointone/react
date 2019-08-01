@@ -118,25 +118,37 @@ it("should keep flushing effects until the're done", () => {
   expect(container.innerHTML).toEqual('5');
 });
 
-it('should flush effects only on exiting the outermost act', () => {
-  function App() {
-    React.useEffect(() => {
-      yields.push(0);
-    });
-    return null;
-  }
-  // let's nest a couple of act() calls
-  act(() => {
+if (__DEV__) {
+  it('should flush effects only on exiting the outermost act', () => {
+    function App() {
+      React.useEffect(() => {
+        yields.push(0);
+      });
+      return null;
+    }
+    // let's nest a couple of act() calls
     act(() => {
-      render(<App />, container);
+      act(() => {
+        render(<App />, container);
+      });
+      // the effect wouldn't have yielded yet because
+      // we're still inside an act() scope
+      expect(clearYields()).toEqual([]);
     });
-    // the effect wouldn't have yielded yet because
-    // we're still inside an act() scope
-    expect(clearYields()).toEqual([]);
+    // but after exiting the last one, effects get flushed
+    expect(clearYields()).toEqual([0]);
   });
-  // but after exiting the last one, effects get flushed
-  expect(clearYields()).toEqual([0]);
-});
+} else {
+  it('does not allow nested act in prod', () => {
+    expect(() => {
+      act(() => {
+        act(() => {
+          render(<App />, container);
+        });
+      });
+    }).toThrowError('act() cannot be nested in non-dev modes');
+  });
+}
 
 it('can handle cascading promises', async () => {
   // this component triggers an effect, that waits a tick,

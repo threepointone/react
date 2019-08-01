@@ -2594,7 +2594,7 @@ export function warnIfUnmockedScheduler(fiber: Fiber) {
         didWarnAboutUnmockedScheduler = true;
         warningWithoutStack(
           false,
-          'Starting from React v17, the "scheduler" module will need to be mocked ' +
+          'In a future version, the "scheduler" module will need to be mocked ' +
             'to guarantee consistent behaviour across tests and browsers. ' +
             'For example, with jest: \n' +
             "jest.mock('scheduler', () => require('scheduler/unstable_mock'));\n\n" +

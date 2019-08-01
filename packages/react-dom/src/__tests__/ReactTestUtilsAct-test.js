@@ -233,25 +233,38 @@ function runActTests(label, render, unmount, rerender) {
         expect(container.innerHTML).toBe('5');
       });
 
-      it('should flush effects only on exiting the outermost act', () => {
-        function App() {
-          React.useEffect(() => {
-            Scheduler.unstable_yieldValue(0);
-          });
-          return null;
-        }
-        // let's nest a couple of act() calls
-        act(() => {
+      if (__DEV__) {
+        it('should flush effects only on exiting the outermost act', () => {
+          function App() {
+            React.useEffect(() => {
+              Scheduler.unstable_yieldValue(0);
+            });
+            return null;
+          }
+          // let's nest a couple of act() calls
           act(() => {
-            render(<App />, container);
+            act(() => {
+              render(<App />, container);
+            });
+            // the effect wouldn't have yielded yet because
+            // we're still inside an act() scope
+            expect(Scheduler).toHaveYielded([]);
           });
-          // the effect wouldn't have yielded yet because
-          // we're still inside an act() scope
-          expect(Scheduler).toHaveYielded([]);
+          // but after exiting the last one, effects get flushed
+          expect(Scheduler).toHaveYielded([0]);
         });
-        // but after exiting the last one, effects get flushed
-        expect(Scheduler).toHaveYielded([0]);
-      });
+      }
+      else {
+        it('does not allow nested act in prod', () => {
+          expect(() => {
+            act(() => {
+              act(() => {
+                render(<App />, container);
+              });
+            });
+          }).toThrowError('act() cannot be nested in non-dev modes');
+        });
+      }
 
       it('warns if a setState is called outside of act(...)', () => {
         let setValue = null;
@@ -463,24 +476,26 @@ function runActTests(label, render, unmount, rerender) {
         }
       });
 
-      it('warns if you try to interleave multiple act calls', async () => {
-        spyOnDevAndProd(console, 'error');
-        // let's try to cheat and spin off a 'thread' with an act call
-        (async () => {
+      if (__DEV__) {
+        it('warns if you try to interleave multiple act calls', async () => {
+          spyOnDevAndProd(console, 'error');
+          // let's try to cheat and spin off a 'thread' with an act call
+          (async () => {
+            await act(async () => {
+              await sleep(50);
+            });
+          })();
+
           await act(async () => {
-            await sleep(50);
+            await sleep(100);
           });
-        })();
 
-        await act(async () => {
-          await sleep(100);
+          await sleep(150);
+          if (__DEV__) {
+            expect(console.error).toHaveBeenCalledTimes(1);
+          }
         });
-
-        await sleep(150);
-        if (__DEV__) {
-          expect(console.error).toHaveBeenCalledTimes(1);
-        }
-      });
+      }
 
       it('async commits and effects are guaranteed to be flushed', async () => {
         function App() {

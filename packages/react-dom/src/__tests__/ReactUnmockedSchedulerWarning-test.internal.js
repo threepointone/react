@@ -32,7 +32,7 @@ it('should warn in sync mode', () => {
   expect(() => {
     ReactDOM.render(<App />, document.createElement('div'));
   }).toWarnDev(
-    ['Starting from React v17, the "scheduler" module will need to be mocked'],
+    ['In a future version, the "scheduler" module will need to be mocked'],
     {withoutStack: true},
   );
   // does not warn twice

@@ -39,18 +39,28 @@ const {
   UMD_DEV,
   UMD_PROD,
   UMD_PROFILING,
+  UMD_TESTING_DEV,
+  UMD_TESTING_PROD,
   NODE_DEV,
   NODE_PROD,
   NODE_PROFILING,
+  NODE_TESTING_DEV,
+  NODE_TESTING_PROD,
   FB_WWW_DEV,
   FB_WWW_PROD,
   FB_WWW_PROFILING,
+  FB_WWW_TESTING_DEV,
+  FB_WWW_TESTING_PROD,
   RN_OSS_DEV,
   RN_OSS_PROD,
   RN_OSS_PROFILING,
+  RN_OSS_TESTING_DEV,
+  RN_OSS_TESTING_PROD,
   RN_FB_DEV,
   RN_FB_PROD,
   RN_FB_PROFILING,
+  RN_FB_TESTING_DEV,
+  RN_FB_TESTING_PROD,
 } = Bundles.bundleTypes;
 
 function parseRequestedNames(names, toCase) {
@@ -111,6 +121,8 @@ function getBabelConfig(updateBabelOptions, bundleType, filename) {
     case FB_WWW_DEV:
     case FB_WWW_PROD:
     case FB_WWW_PROFILING:
+    case FB_WWW_TESTING_DEV:
+    case FB_WWW_TESTING_PROD:
       return Object.assign({}, options, {
         plugins: options.plugins.concat([
           // Minify invariant messages
@@ -122,9 +134,13 @@ function getBabelConfig(updateBabelOptions, bundleType, filename) {
     case RN_OSS_DEV:
     case RN_OSS_PROD:
     case RN_OSS_PROFILING:
+    case RN_OSS_TESTING_DEV:
+    case RN_OSS_TESTING_PROD:
     case RN_FB_DEV:
     case RN_FB_PROD:
     case RN_FB_PROFILING:
+    case RN_FB_TESTING_DEV:
+    case RN_FB_TESTING_PROD:
       return Object.assign({}, options, {
         plugins: options.plugins.concat([
           [
@@ -139,9 +155,13 @@ function getBabelConfig(updateBabelOptions, bundleType, filename) {
     case UMD_DEV:
     case UMD_PROD:
     case UMD_PROFILING:
+    case UMD_TESTING_DEV:
+    case UMD_TESTING_PROD:
     case NODE_DEV:
     case NODE_PROD:
     case NODE_PROFILING:
+    case NODE_TESTING_DEV:
+    case NODE_TESTING_PROD:
       return Object.assign({}, options, {
         plugins: options.plugins.concat([
           // Use object-assign polyfill in open source
@@ -185,19 +205,29 @@ function getFormat(bundleType) {
     case UMD_DEV:
     case UMD_PROD:
     case UMD_PROFILING:
+    case UMD_TESTING_DEV:
+    case UMD_TESTING_PROD:
       return `umd`;
     case NODE_DEV:
     case NODE_PROD:
     case NODE_PROFILING:
+    case NODE_TESTING_DEV:
+    case NODE_TESTING_PROD:
     case FB_WWW_DEV:
     case FB_WWW_PROD:
     case FB_WWW_PROFILING:
+    case FB_WWW_TESTING_DEV:
+    case FB_WWW_TESTING_PROD:
     case RN_OSS_DEV:
     case RN_OSS_PROD:
     case RN_OSS_PROFILING:
+    case RN_OSS_TESTING_DEV:
+    case RN_OSS_TESTING_PROD:
     case RN_FB_DEV:
     case RN_FB_PROD:
     case RN_FB_PROFILING:
+    case RN_FB_TESTING_DEV:
+    case RN_FB_TESTING_PROD:
       return `cjs`;
   }
 }
@@ -212,12 +242,20 @@ function getFilename(name, globalName, bundleType) {
       return `${name}.production.min.js`;
     case UMD_PROFILING:
       return `${name}.profiling.min.js`;
+    case UMD_TESTING_DEV:
+      return `${name}.testing.development.js`;
+    case UMD_TESTING_PROD:
+      return `${name}.testing.production.min.js`;
     case NODE_DEV:
       return `${name}.development.js`;
     case NODE_PROD:
       return `${name}.production.min.js`;
     case NODE_PROFILING:
       return `${name}.profiling.min.js`;
+    case NODE_TESTING_DEV:
+      return `${name}.testing.development.js`;
+    case NODE_TESTING_PROD:
+      return `${name}.testing.production.min.js`;
     case FB_WWW_DEV:
     case RN_OSS_DEV:
     case RN_FB_DEV:
@@ -230,27 +268,45 @@ function getFilename(name, globalName, bundleType) {
     case RN_FB_PROFILING:
     case RN_OSS_PROFILING:
       return `${globalName}-profiling.js`;
+    case FB_WWW_TESTING_DEV:
+    case RN_FB_TESTING_DEV:
+    case RN_OSS_TESTING_DEV:
+      return `${globalName}-testing-dev.js`;
+    case FB_WWW_TESTING_PROD:
+    case RN_FB_TESTING_PROD:
+    case RN_OSS_TESTING_PROD:
+      return `${globalName}-testing-prod.js`;
   }
 }
 
 function isProductionBundleType(bundleType) {
   switch (bundleType) {
     case UMD_DEV:
+    case UMD_TESTING_DEV:
     case NODE_DEV:
+    case NODE_TESTING_DEV:
     case FB_WWW_DEV:
+    case FB_WWW_TESTING_DEV:
     case RN_OSS_DEV:
+    case RN_OSS_TESTING_DEV:
     case RN_FB_DEV:
+    case RN_FB_TESTING_DEV:
       return false;
     case UMD_PROD:
     case NODE_PROD:
     case UMD_PROFILING:
+    case UMD_TESTING_PROD:
     case NODE_PROFILING:
+    case NODE_TESTING_PROD:
     case FB_WWW_PROD:
     case FB_WWW_PROFILING:
+    case FB_WWW_TESTING_PROD:
     case RN_OSS_PROD:
     case RN_OSS_PROFILING:
+    case RN_OSS_TESTING_PROD:
     case RN_FB_PROD:
     case RN_FB_PROFILING:
+    case RN_FB_TESTING_PROD:
       return true;
     default:
       throw new Error(`Unknown type: ${bundleType}`);
@@ -261,6 +317,40 @@ function isProfilingBundleType(bundleType) {
   switch (bundleType) {
     case FB_WWW_DEV:
     case FB_WWW_PROD:
+    case FB_WWW_TESTING_DEV:
+    case FB_WWW_TESTING_PROD:
+    case NODE_DEV:
+    case NODE_PROD:
+    case NODE_TESTING_DEV:
+    case NODE_TESTING_PROD:
+    case RN_FB_DEV:
+    case RN_FB_PROD:
+    case RN_FB_TESTING_DEV:
+    case RN_FB_TESTING_PROD:
+    case RN_OSS_DEV:
+    case RN_OSS_PROD:
+    case RN_OSS_TESTING_DEV:
+    case RN_OSS_TESTING_PROD:
+    case UMD_DEV:
+    case UMD_PROD:
+    case UMD_TESTING_DEV:
+    case UMD_TESTING_PROD:
+      return false;
+    case FB_WWW_PROFILING:
+    case NODE_PROFILING:
+    case RN_FB_PROFILING:
+    case RN_OSS_PROFILING:
+    case UMD_PROFILING:
+      return true;
+    default:
+      throw new Error(`Unknown type: ${bundleType}`);
+  }
+}
+
+function isTestingBundleType(bundleType) {
+  switch (bundleType) {
+    case FB_WWW_DEV:
+    case FB_WWW_PROD:
     case NODE_DEV:
     case NODE_PROD:
     case RN_FB_DEV:
@@ -269,12 +359,22 @@ function isProfilingBundleType(bundleType) {
     case RN_OSS_PROD:
     case UMD_DEV:
     case UMD_PROD:
-      return false;
     case FB_WWW_PROFILING:
     case NODE_PROFILING:
     case RN_FB_PROFILING:
     case RN_OSS_PROFILING:
     case UMD_PROFILING:
+      return false;
+    case FB_WWW_TESTING_DEV:
+    case FB_WWW_TESTING_PROD:
+    case NODE_TESTING_DEV:
+    case NODE_TESTING_PROD:
+    case RN_FB_TESTING_DEV:
+    case RN_FB_TESTING_PROD:
+    case RN_OSS_TESTING_DEV:
+    case RN_OSS_TESTING_PROD:
+    case UMD_TESTING_DEV:
+    case UMD_TESTING_PROD:
       return true;
     default:
       throw new Error(`Unknown type: ${bundleType}`);
@@ -310,21 +410,30 @@ function getPlugins(
   const forks = Modules.getForks(bundleType, entry, moduleType);
   const isProduction = isProductionBundleType(bundleType);
   const isProfiling = isProfilingBundleType(bundleType);
+  const isTesting = isTestingBundleType(bundleType);
   const isUMDBundle =
     bundleType === UMD_DEV ||
     bundleType === UMD_PROD ||
-    bundleType === UMD_PROFILING;
+    bundleType === UMD_PROFILING ||
+    bundleType === UMD_TESTING_DEV ||
+    bundleType === UMD_TESTING_PROD;
   const isFBBundle =
     bundleType === FB_WWW_DEV ||
     bundleType === FB_WWW_PROD ||
-    bundleType === FB_WWW_PROFILING;
+    bundleType === FB_WWW_PROFILING ||
+    bundleType === FB_WWW_TESTING_DEV ||
+    bundleType === FB_WWW_TESTING_PROD;
   const isRNBundle =
     bundleType === RN_OSS_DEV ||
     bundleType === RN_OSS_PROD ||
     bundleType === RN_OSS_PROFILING ||
+    bundleType === RN_OSS_TESTING_DEV ||
+    bundleType === RN_OSS_TESTING_PROD ||
     bundleType === RN_FB_DEV ||
     bundleType === RN_FB_PROD ||
-    bundleType === RN_FB_PROFILING;
+    bundleType === RN_FB_PROFILING ||
+    bundleType === RN_FB_TESTING_DEV ||
+    bundleType === RN_FB_TESTING_PROD;
   const shouldStayReadable = isFBBundle || isRNBundle || forcePrettyOutput;
   return [
     // Extract error codes from invariant() messages into a file.
@@ -359,6 +468,7 @@ function getPlugins(
       __DEV__: isProduction ? 'false' : 'true',
       __PROFILE__: isProfiling || !isProduction ? 'true' : 'false',
       __UMD__: isUMDBundle ? 'true' : 'false',
+      __TEST__: isTesting ? 'true' : 'false',
       'process.env.NODE_ENV': isProduction ? "'production'" : "'development'",
     }),
     // We still need CommonJS for external deps like object-assign.
@@ -459,7 +569,9 @@ async function createBundle(bundle, bundleType) {
   if (
     bundleType === FB_WWW_DEV ||
     bundleType === FB_WWW_PROD ||
-    bundleType === FB_WWW_PROFILING
+    bundleType === FB_WWW_PROFILING ||
+    bundleType === FB_WWW_TESTING_DEV ||
+    bundleType === FB_WWW_TESTING_PROD
   ) {
     const resolvedFBEntry = resolvedEntry.replace('.js', '.fb.js');
     if (fs.existsSync(resolvedFBEntry)) {
@@ -470,7 +582,9 @@ async function createBundle(bundle, bundleType) {
   const shouldBundleDependencies =
     bundleType === UMD_DEV ||
     bundleType === UMD_PROD ||
-    bundleType === UMD_PROFILING;
+    bundleType === UMD_PROFILING ||
+    bundleType === UMD_TESTING_DEV ||
+    bundleType === UMD_TESTING_PROD;
   const peerGlobals = Modules.getPeerGlobals(bundle.externals, bundleType);
   let externals = Object.keys(peerGlobals);
   if (!shouldBundleDependencies) {
@@ -512,7 +626,9 @@ async function createBundle(bundle, bundleType) {
     legacy:
       bundleType === FB_WWW_DEV ||
       bundleType === FB_WWW_PROD ||
-      bundleType === FB_WWW_PROFILING,
+      bundleType === FB_WWW_PROFILING ||
+      bundleType === FB_WWW_TESTING_DEV ||
+      bundleType === FB_WWW_TESTING_PROD,
   };
   const [mainOutputPath, ...otherOutputPaths] = Packaging.getBundleOutputPaths(
     bundleType,
@@ -646,18 +762,28 @@ async function buildEverything() {
       [bundle, UMD_DEV],
       [bundle, UMD_PROD],
       [bundle, UMD_PROFILING],
+      [bundle, UMD_TESTING_DEV],
+      [bundle, UMD_TESTING_PROD],
       [bundle, NODE_DEV],
       [bundle, NODE_PROD],
       [bundle, NODE_PROFILING],
+      [bundle, NODE_TESTING_DEV],
+      [bundle, NODE_TESTING_PROD],
       [bundle, FB_WWW_DEV],
       [bundle, FB_WWW_PROD],
       [bundle, FB_WWW_PROFILING],
+      [bundle, FB_WWW_TESTING_DEV],
+      [bundle, FB_WWW_TESTING_PROD],
       [bundle, RN_OSS_DEV],
       [bundle, RN_OSS_PROD],
       [bundle, RN_OSS_PROFILING],
+      [bundle, RN_OSS_TESTING_DEV],
+      [bundle, RN_OSS_TESTING_PROD],
       [bundle, RN_FB_DEV],
       [bundle, RN_FB_PROD],
-      [bundle, RN_FB_PROFILING]
+      [bundle, RN_FB_PROFILING],
+      [bundle, RN_FB_TESTING_DEV],
+      [bundle, RN_FB_TESTING_PROD]
     );
   }
 

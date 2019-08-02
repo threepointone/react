@@ -11,7 +11,10 @@
  * Used by act() to track whether you're inside an act() scope.
  */
 
-const IsSomeRendererActing = {
-  current: (false: boolean),
-};
+let IsSomeRendererActing;
+if (__DEV__ || __TEST__) {
+  IsSomeRendererActing = {
+    current: (false: boolean),
+  };
+}
 export default IsSomeRendererActing;

@@ -1035,7 +1035,7 @@ function renderRoot(
         !isSync &&
         // do not delay if we're inside an act() scope
         !(
-          __DEV__ &&
+          (__DEV__ || __TEST__) &&
           flushSuspenseFallbacksInTests &&
           IsThisRendererActing.current
         )
@@ -1080,7 +1080,7 @@ function renderRoot(
         !isSync &&
         // do not delay if we're inside an act() scope
         !(
-          __DEV__ &&
+          (__DEV__ || __TEST__) &&
           flushSuspenseFallbacksInTests &&
           IsThisRendererActing.current
         )
@@ -1157,7 +1157,7 @@ function renderRoot(
         !isSync &&
         // do not delay if we're inside an act() scope
         !(
-          __DEV__ &&
+          (__DEV__ || __TEST__) &&
           flushSuspenseFallbacksInTests &&
           IsThisRendererActing.current
         ) &&
@@ -2480,7 +2480,9 @@ function warnAboutInvalidUpdatesOnClassComponentsInDEV(fiber) {
 }
 
 // a 'shared' variable that changes when act() opens/closes in tests.
-export const IsThisRendererActing = {current: (false: boolean)};
+
+export const IsThisRendererActing =
+  __DEV__ || __TEST__ ? {current: (false: boolean)} : undefined;
 
 export function warnIfNotScopedWithMatchingAct(fiber: Fiber): void {
   if (__DEV__) {

@@ -13,18 +13,28 @@ const {
   UMD_DEV,
   UMD_PROD,
   UMD_PROFILING,
+  UMD_TESTING_DEV,
+  UMD_TESTING_PROD,
   NODE_DEV,
   NODE_PROD,
   NODE_PROFILING,
+  NODE_TESTING_DEV,
+  NODE_TESTING_PROD,
   FB_WWW_DEV,
   FB_WWW_PROD,
   FB_WWW_PROFILING,
+  FB_WWW_TESTING_DEV,
+  FB_WWW_TESTING_PROD,
   RN_OSS_DEV,
   RN_OSS_PROD,
   RN_OSS_PROFILING,
+  RN_OSS_TESTING_DEV,
+  RN_OSS_TESTING_PROD,
   RN_FB_DEV,
   RN_FB_PROD,
   RN_FB_PROFILING,
+  RN_FB_TESTING_DEV,
+  RN_FB_TESTING_PROD,
 } = Bundles.bundleTypes;
 
 function getPackageName(name) {
@@ -39,10 +49,14 @@ function getBundleOutputPaths(bundleType, filename, packageName) {
     case NODE_DEV:
     case NODE_PROD:
     case NODE_PROFILING:
+    case NODE_TESTING_DEV:
+    case NODE_TESTING_PROD:
       return [`build/node_modules/${packageName}/cjs/${filename}`];
     case UMD_DEV:
     case UMD_PROD:
     case UMD_PROFILING:
+    case UMD_TESTING_DEV:
+    case UMD_TESTING_PROD:
       return [
         `build/node_modules/${packageName}/umd/${filename}`,
         `build/dist/${filename}`,
@@ -50,10 +64,14 @@ function getBundleOutputPaths(bundleType, filename, packageName) {
     case FB_WWW_DEV:
     case FB_WWW_PROD:
     case FB_WWW_PROFILING:
+    case FB_WWW_TESTING_DEV:
+    case FB_WWW_TESTING_PROD:
       return [`build/facebook-www/${filename}`];
     case RN_OSS_DEV:
     case RN_OSS_PROD:
     case RN_OSS_PROFILING:
+    case RN_OSS_TESTING_DEV:
+    case RN_OSS_TESTING_PROD:
       switch (packageName) {
         case 'react-native-renderer':
           return [`build/react-native/implementations/${filename}`];
@@ -63,6 +81,8 @@ function getBundleOutputPaths(bundleType, filename, packageName) {
     case RN_FB_DEV:
     case RN_FB_PROD:
     case RN_FB_PROFILING:
+    case RN_FB_TESTING_DEV:
+    case RN_FB_TESTING_PROD:
       switch (packageName) {
         case 'react-native-renderer':
           return [

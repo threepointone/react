@@ -6,6 +6,8 @@ const bundleTypes = require('./bundles').bundleTypes;
 const UMD_DEV = bundleTypes.UMD_DEV;
 const UMD_PROD = bundleTypes.UMD_PROD;
 const UMD_PROFILING = bundleTypes.UMD_PROFILING;
+const UMD_TESTING_DEV = bundleTypes.UMD_TESTING_DEV;
+const UMD_TESTING_PROD = bundleTypes.UMD_TESTING_PROD;
 
 // For any external that is used in a DEV-only condition, explicitly
 // specify whether it has side effects during import or not. This lets
@@ -36,7 +38,9 @@ function getPeerGlobals(externals, bundleType) {
       !knownGlobals[name] &&
       (bundleType === UMD_DEV ||
         bundleType === UMD_PROD ||
-        bundleType === UMD_PROFILING)
+        bundleType === UMD_PROFILING ||
+        bundleType === UMD_TESTING_DEV ||
+        bundleType === UMD_TESTING_PROD)
     ) {
       throw new Error('Cannot build UMD without a global name for: ' + name);
     }

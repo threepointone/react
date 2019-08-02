@@ -7,15 +7,23 @@ const inlinedHostConfigs = require('../shared/inlinedHostConfigs');
 const UMD_DEV = bundleTypes.UMD_DEV;
 const UMD_PROD = bundleTypes.UMD_PROD;
 const UMD_PROFILING = bundleTypes.UMD_PROFILING;
+const UMD_TESTING_DEV = bundleTypes.UMD_TESTING_DEV;
+const UMD_TESTING_PROD = bundleTypes.UMD_TESTING_DEV;
 const FB_WWW_DEV = bundleTypes.FB_WWW_DEV;
 const FB_WWW_PROD = bundleTypes.FB_WWW_PROD;
 const FB_WWW_PROFILING = bundleTypes.FB_WWW_PROFILING;
+const FB_WWW_TESTING_DEV = bundleTypes.FB_WWW_TESTING_DEV;
+const FB_WWW_TESTING_PROD = bundleTypes.FB_WWW_TESTING_PROD;
 const RN_OSS_DEV = bundleTypes.RN_OSS_DEV;
 const RN_OSS_PROD = bundleTypes.RN_OSS_PROD;
 const RN_OSS_PROFILING = bundleTypes.RN_OSS_PROFILING;
+const RN_OSS_TESTING_DEV = bundleTypes.RN_OSS_TESTING_DEV;
+const RN_OSS_TESTING_PROD = bundleTypes.RN_OSS_TESTING_PROD;
 const RN_FB_DEV = bundleTypes.RN_FB_DEV;
 const RN_FB_PROD = bundleTypes.RN_FB_PROD;
 const RN_FB_PROFILING = bundleTypes.RN_FB_PROFILING;
+const RN_FB_TESTING_DEV = bundleTypes.RN_FB_TESTING_DEV;
+const RN_FB_TESTING_PROD = bundleTypes.RN_FB_TESTING_PROD;
 const RENDERER = moduleTypes.RENDERER;
 const RECONCILER = moduleTypes.RECONCILER;
 
@@ -28,7 +36,9 @@ const forks = Object.freeze({
     if (
       bundleType !== UMD_DEV &&
       bundleType !== UMD_PROD &&
-      bundleType !== UMD_PROFILING
+      bundleType !== UMD_PROFILING &&
+      bundleType !== UMD_TESTING_DEV &&
+      bundleType !== UMD_TESTING_PROD
     ) {
       // It's only relevant for UMD bundles since that's where the duplication
       // happens. Other bundles just require('object-assign') anyway.
@@ -73,10 +83,14 @@ const forks = Object.freeze({
           case RN_FB_DEV:
           case RN_FB_PROD:
           case RN_FB_PROFILING:
+          case RN_FB_TESTING_DEV:
+          case RN_FB_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.native-fb.js';
           case RN_OSS_DEV:
           case RN_OSS_PROD:
           case RN_OSS_PROFILING:
+          case RN_OSS_TESTING_DEV:
+          case RN_OSS_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.native-oss.js';
           default:
             throw Error(
@@ -88,10 +102,14 @@ const forks = Object.freeze({
           case RN_FB_DEV:
           case RN_FB_PROD:
           case RN_FB_PROFILING:
+          case RN_FB_TESTING_DEV:
+          case RN_FB_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.native-fb.js';
           case RN_OSS_DEV:
           case RN_OSS_PROD:
           case RN_OSS_PROFILING:
+          case RN_OSS_TESTING_DEV:
+          case RN_OSS_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.native-oss.js';
           default:
             throw Error(
@@ -105,6 +123,8 @@ const forks = Object.freeze({
           case FB_WWW_DEV:
           case FB_WWW_PROD:
           case FB_WWW_PROFILING:
+          case FB_WWW_TESTING_DEV:
+          case FB_WWW_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.test-renderer.www.js';
         }
         return 'shared/forks/ReactFeatureFlags.test-renderer.js';
@@ -113,6 +133,8 @@ const forks = Object.freeze({
           case FB_WWW_DEV:
           case FB_WWW_PROD:
           case FB_WWW_PROFILING:
+          case FB_WWW_TESTING_DEV:
+          case FB_WWW_TESTING_PROD:
             return 'shared/forks/ReactFeatureFlags.www.js';
         }
     }
@@ -124,6 +146,8 @@ const forks = Object.freeze({
       case UMD_DEV:
       case UMD_PROD:
       case UMD_PROFILING:
+      case UMD_TESTING_DEV:
+      case UMD_TESTING_PROD:
         if (dependencies.indexOf('react') === -1) {
           // It's only safe to use this fork for modules that depend on React,
           // because they read the re-exported API from the SECRET_INTERNALS object.
@@ -143,6 +167,8 @@ const forks = Object.freeze({
       case UMD_DEV:
       case UMD_PROD:
       case UMD_PROFILING:
+      case UMD_TESTING_DEV:
+      case UMD_TESTING_PROD:
         if (dependencies.indexOf('react') === -1) {
           // It's only safe to use this fork for modules that depend on React,
           // because they read the re-exported API from the SECRET_INTERNALS object.
@@ -161,7 +187,9 @@ const forks = Object.freeze({
     if (
       bundleType === FB_WWW_DEV ||
       bundleType === FB_WWW_PROD ||
-      bundleType === FB_WWW_PROFILING
+      bundleType === FB_WWW_PROFILING ||
+      bundleType === FB_WWW_TESTING_DEV ||
+      bundleType === FB_WWW_TESTING_PROD
     ) {
       return 'scheduler/src/forks/SchedulerFeatureFlags.www.js';
     }
@@ -186,6 +214,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         return 'shared/forks/lowPriorityWarning.www.js';
       default:
         return null;
@@ -198,6 +228,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         return 'shared/forks/warningWithoutStack.www.js';
       default:
         return null;
@@ -211,6 +243,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         return 'react/src/forks/ReactCurrentOwner.www.js';
       default:
         return null;
@@ -224,6 +258,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         return 'react/src/forks/ReactCurrentDispatcher.www.js';
       default:
         return null;
@@ -235,6 +271,8 @@ const forks = Object.freeze({
       case UMD_DEV:
       case UMD_PROD:
       case UMD_PROFILING:
+      case UMD_TESTING_DEV:
+      case UMD_TESTING_PROD:
         return 'react/src/forks/ReactSharedInternals.umd.js';
       default:
         return null;
@@ -247,6 +285,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         return 'shared/forks/invokeGuardedCallbackImpl.www.js';
       default:
         return null;
@@ -259,14 +299,20 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         // Use the www fork which shows an error dialog.
         return 'react-reconciler/src/forks/ReactFiberErrorDialog.www.js';
       case RN_OSS_DEV:
       case RN_OSS_PROD:
       case RN_OSS_PROFILING:
+      case RN_OSS_TESTING_DEV:
+      case RN_OSS_TESTING_PROD:
       case RN_FB_DEV:
       case RN_FB_PROD:
       case RN_FB_PROFILING:
+      case RN_FB_TESTING_DEV:
+      case RN_FB_TESTING_PROD:
         switch (entry) {
           case 'react-native-renderer':
           case 'react-native-renderer/fabric':
@@ -373,6 +419,8 @@ const forks = Object.freeze({
       case FB_WWW_DEV:
       case FB_WWW_PROD:
       case FB_WWW_PROFILING:
+      case FB_WWW_TESTING_DEV:
+      case FB_WWW_TESTING_PROD:
         // Use the www fork which is integrated with TimeSlice profiling.
         return 'react-dom/src/events/forks/EventListener-www.js';
       default:

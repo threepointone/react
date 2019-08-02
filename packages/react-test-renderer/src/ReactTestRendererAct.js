@@ -8,6 +8,7 @@
  */
 import type {Thenable} from 'react-reconciler/src/ReactFiberWorkLoop';
 
+import invariant from 'shared/invariant';
 import {
   batchedUpdates,
   flushPassiveEffects,
@@ -57,6 +58,10 @@ function flushWorkAndMicroTasks(onDone: (err: ?Error) => void) {
 let actingUpdatesScopeDepth = 0;
 
 function act(callback: () => Thenable) {
+  invariant(
+    __DEV__ || __TEST__,
+    'do not use act outside of dev/test environments',
+  );
   let previousActingUpdatesScopeDepth = actingUpdatesScopeDepth;
   let previousIsSomeRendererActing;
   let previousIsThisRendererActing;

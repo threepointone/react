@@ -20,6 +20,7 @@ import type {UpdateQueue} from 'react-reconciler/src/ReactUpdateQueue';
 import type {ReactNodeList} from 'shared/ReactTypes';
 import type {RootTag} from 'shared/ReactRootTags';
 
+import invariant from 'shared/invariant';
 import * as Scheduler from 'scheduler/unstable_mock';
 import {createPortal} from 'shared/ReactPortal';
 import expect from 'expect';
@@ -632,6 +633,10 @@ function createReactNoop(reconciler: Function, useMutation: boolean) {
   let actingUpdatesScopeDepth = 0;
 
   function act(callback: () => Thenable) {
+    invariant(
+      __DEV__ || __TEST__,
+      'do not use act outside of dev/test environments',
+    );
     let previousActingUpdatesScopeDepth = actingUpdatesScopeDepth;
     let previousIsSomeRendererActing;
     let previousIsThisRendererActing;

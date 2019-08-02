@@ -552,6 +552,8 @@ function unstable_shouldYield() {
 
 const unstable_requestPaint = requestPaint;
 
+const unstable_flushAllWithoutAsserting = undefined;
+
 export {
   ImmediatePriority as unstable_ImmediatePriority,
   UserBlockingPriority as unstable_UserBlockingPriority,
@@ -571,4 +573,5 @@ export {
   unstable_getFirstCallbackNode,
   getCurrentTime as unstable_now,
   forceFrameRate as unstable_forceFrameRate,
+  unstable_flushAllWithoutAsserting,
 };

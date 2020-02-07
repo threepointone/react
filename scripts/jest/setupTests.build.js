@@ -1,5 +1,6 @@
 'use strict';
 
+jest.mock('react', () => require.requireActual(`react/testing`));
 jest.mock('react-dom', () => require.requireActual(`react-dom/testing`));
 
 jest.mock('scheduler', () => require.requireActual('scheduler/unstable_mock'));

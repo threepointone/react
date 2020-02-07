@@ -27,6 +27,7 @@ import {
   flushSuspenseFallbacksInTests,
   disableSchedulerTimeoutBasedOnReactExpirationTime,
   enableTrainModelFix,
+  isTestEnvironment,
 } from 'shared/ReactFeatureFlags';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
 import invariant from 'shared/invariant';
@@ -2729,7 +2730,8 @@ function warnAboutInvalidUpdatesOnClassComponentsInDEV(fiber) {
 }
 
 // a 'shared' variable that changes when act() opens/closes in tests.
-export const IsThisRendererActing = {current: (false: boolean)};
+export const IsThisRendererActing =
+  __DEV__ || isTestEnvironment ? {current: (false: boolean)} : null;
 
 export function warnIfNotScopedWithMatchingAct(fiber: Fiber): void {
   if (__DEV__) {

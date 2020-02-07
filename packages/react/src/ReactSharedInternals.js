@@ -11,12 +11,12 @@ import ReactCurrentBatchConfig from './ReactCurrentBatchConfig';
 import ReactCurrentOwner from './ReactCurrentOwner';
 import ReactDebugCurrentFrame from './ReactDebugCurrentFrame';
 import IsSomeRendererActing from './IsSomeRendererActing';
+import {isTestEnvironment} from 'shared/ReactFeatureFlags';
 
 const ReactSharedInternals = {
   ReactCurrentDispatcher,
   ReactCurrentBatchConfig,
   ReactCurrentOwner,
-  IsSomeRendererActing,
   // Used by renderers to avoid bundling object-assign twice in UMD bundles:
   assign,
 };
@@ -29,6 +29,10 @@ if (__DEV__) {
     // TODO: remove in React 17.0.
     ReactComponentTreeHook: {},
   });
+}
+
+if (__DEV__ || isTestEnvironment) {
+  Object.assign(ReactSharedInternals, {IsSomeRendererActing});
 }
 
 export default ReactSharedInternals;

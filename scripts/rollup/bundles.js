@@ -76,6 +76,24 @@ const bundles = [
     externals: [],
   },
 
+  /******* Isomorphic - testing *******/
+  {
+    bundleTypes: [UMD_DEV, UMD_PROD, UMD_PROFILING, NODE_DEV, NODE_PROD],
+    moduleType: ISOMORPHIC,
+    entry: 'react/testing',
+    global: 'React',
+    externals: [],
+  },
+
+  /******* Isomorphic - www - testing *******/
+  {
+    bundleTypes: [FB_WWW_DEV, FB_WWW_PROD, FB_WWW_PROFILING],
+    moduleType: ISOMORPHIC,
+    entry: 'react/testing',
+    global: 'ReactTesting',
+    externals: [],
+  },
+
   /******* React DOM *******/
   {
     bundleTypes: [

@@ -180,6 +180,7 @@ inlinedHostConfigs.forEach(rendererInfo => {
 jest.mock('shared/ReactFeatureFlags', () =>
   require.requireActual('shared/forks/ReactFeatureFlags.testing.js')
 );
+jest.mock('react', () => require.requireActual('react/testing'));
 jest.mock('react-dom', () => require.requireActual('react-dom/testing'));
 
 // Make it possible to import this module inside

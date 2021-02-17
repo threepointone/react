@@ -150,6 +150,7 @@ const getPublicPackages = isExperimental => {
       'react-fs',
       'react-pg',
       'react-server-dom-webpack',
+      'react-server-dom-esbuild',
     ];
   } else {
     return [

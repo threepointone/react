@@ -340,6 +340,58 @@ const bundles = [
     externals: ['url', 'module'],
   },
 
+  /******* React Server DOM esbuild Writer *******/
+  {
+    bundleTypes: [NODE_DEV, NODE_PROD, UMD_DEV, UMD_PROD],
+    moduleType: RENDERER,
+    entry: 'react-server-dom-esbuild/writer.browser.server',
+    global: 'ReactServerDOMWriter',
+    externals: ['react', 'react-dom/server'],
+  },
+  {
+    bundleTypes: [NODE_DEV, NODE_PROD],
+    moduleType: RENDERER,
+    entry: 'react-server-dom-esbuild/writer.node.server',
+    global: 'ReactServerDOMWriter',
+    externals: ['react', 'react-dom/server'],
+  },
+
+  /******* React Server DOM esbuild Reader *******/
+  {
+    bundleTypes: [NODE_DEV, NODE_PROD, UMD_DEV, UMD_PROD],
+    moduleType: RENDERER,
+    entry: 'react-server-dom-esbuild',
+    global: 'ReactServerDOMReader',
+    externals: ['react'],
+  },
+
+  /******* React Server DOM esbuild Plugin *******/
+  {
+    bundleTypes: [NODE_ES2015],
+    moduleType: RENDERER_UTILS,
+    entry: 'react-server-dom-esbuild/plugin',
+    global: 'ReactServerEsbuildPlugin',
+    externals: ['fs', 'path', 'url', 'neo-async'],
+  },
+
+  /******* React Server DOM esbuild Node.js Loader *******/
+  {
+    bundleTypes: [NODE_ESM],
+    moduleType: RENDERER_UTILS,
+    entry: 'react-server-dom-esbuild/node-loader',
+    global: 'ReactServerEsbuildNodeLoader',
+    externals: ['acorn'],
+  },
+
+  /******* React Server DOM esbuild Node.js CommonJS Loader *******/
+  {
+    bundleTypes: [NODE_ES2015],
+    moduleType: RENDERER_UTILS,
+    entry: 'react-server-dom-esbuild/node-register',
+    global: 'ReactFlightEsbuildNodeRegister',
+    externals: ['url', 'module'],
+  },
+
   /******* React Server DOM Relay Writer *******/
   {
     bundleTypes: [FB_WWW_DEV, FB_WWW_PROD],

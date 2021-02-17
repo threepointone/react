@@ -15,6 +15,8 @@ module.exports = [
       'react-dom/unstable-fizz.node',
       'react-server-dom-webpack/writer.node.server',
       'react-server-dom-webpack',
+      'react-server-dom-esbuild/writer.node.server',
+      'react-server-dom-esbuild',
     ],
     paths: [
       'react-dom',
@@ -25,6 +27,10 @@ module.exports = [
       'react-server-dom-webpack/writer',
       'react-server-dom-webpack/writer.node.server',
       'react-server-dom-webpack/src/ReactFlightDOMServerNode.js', // react-server-dom-webpack/writer.node.server
+      'react-server-dom-esbuild',
+      'react-server-dom-esbuild/writer',
+      'react-server-dom-esbuild/writer.node.server',
+      'react-server-dom-esbuild/src/ReactFlightDOMServerNode.js', // react-server-dom-esbuild/writer.node.server
       'react-client/src/ReactFlightClientStream.js', // We can only type check this in streaming configurations.
       'react-interactions',
     ],
@@ -39,6 +45,8 @@ module.exports = [
       'react-dom/unstable-fizz.browser',
       'react-server-dom-webpack/writer.browser.server',
       'react-server-dom-webpack',
+      'react-server-dom-esbuild/writer.browser.server',
+      'react-server-dom-esbuild',
     ],
     paths: [
       'react-dom',
@@ -48,6 +56,9 @@ module.exports = [
       'react-server-dom-webpack',
       'react-server-dom-webpack/writer.browser.server',
       'react-server-dom-webpack/src/ReactFlightDOMServerBrowser.js', // react-server-dom-webpack/writer.browser.server
+      'react-server-dom-esbuild',
+      'react-server-dom-esbuild/writer.browser.server',
+      'react-server-dom-esbuild/src/ReactFlightDOMServerBrowser.js', // react-server-dom-esbuild/writer.browser.server
       'react-client/src/ReactFlightClientStream.js', // We can only type check this in streaming configurations.
     ],
     isFlowTyped: true,
